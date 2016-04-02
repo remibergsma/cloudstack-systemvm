@@ -50,6 +50,16 @@
     "provisioners":
     [
         {
+            "type": "file",
+            "source": "files/cloud-early-config",
+            "destination": "/tmp/cloud-early-config"
+        },
+        {
+            "type": "file",
+            "source": "files/patchsystemvm.sh",
+            "destination": "/tmp/patchsystemvm.sh"
+        },
+        {
             "type": "shell",
             "scripts":
             [

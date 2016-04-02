@@ -15,26 +15,21 @@ configure_apache2 () {
 }
 
 install_cloud_scripts () {
-  # ./cloud_scripts/ has been put there by ../../cloud_scripts_shar_archive.sh
-  rsync -av ./cloud_scripts/ /
-  chmod +x /opt/cloud/bin/* \
-    /root/{clearUsageRules.sh,reconfigLB.sh,monitorServices.py} \
-    /etc/init.d/{cloud,cloud-early-config,cloud-passwd-srvr,postinit} \
-    /etc/cron.daily/cloud-cleanup \
-    /etc/profile.d/cloud.sh
+   echo "Installing initial version of cloud-early-config"
+   mv /tmp/cloud-early-config /etc/init.d
+   chmod 755 /etc/init.d/cloud-early-config
+   chkconfig --add cloud-early-config
+   chkconfig cloud-early-config on
 
-  chkconfig --add cloud-early-config
-  chkconfig cloud-early-config on
-  chkconfig --add cloud-passwd-srvr
-  chkconfig cloud-passwd-srvr off
-  chkconfig --add cloud
-  chkconfig cloud off
+   echo "Installing initial version of patchsystemvm.sh"
+   mkdir -p /opt/cloud/bin/
+   mv /tmp/patchsystemvm.sh /opt/cloud/bin/
+   chmod 755 /opt/cloud/bin/patchsystemvm.sh
 }
 
 do_signature () {
   mkdir -p /var/cache/cloud/ /usr/share/cloud/
-  (cd ./cloud_scripts/; tar -cvf - * | gzip > /usr/share/cloud/cloud-scripts.tgz)
-  md5sum /usr/share/cloud/cloud-scripts.tgz | awk '{print $1}' > /var/cache/cloud/cloud-scripts-signature
+  echo 'zero' > /var/cache/cloud/cloud-scripts-signature
   echo "Cloudstack Release $SYSTEMVM_RELEASE $(date)" > /etc/cloudstack-release
 }
 
